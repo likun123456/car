@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.demo.dao.CarMapper">
+
+    <resultMap id="BaseResultMap" type="com.demo.vo.Car" >
+            <result column="id" property="id" />
+            <result column="car_pai" property="carPai" />
+            <result column="car_name" property="carName" />
+            <result column="car_chexing" property="carChexing" />
+            <result column="car_cheng" property="carCheng" />
+            <result column="car_indate" property="carIndate" />
+            <result column="car_status" property="carStatus" />
+            <result column="car_user" property="carUser" />
+            <result column="car_phone" property="carPhone" />
+            <result column="car_text" property="carText" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        `id`,`car_pai`,`car_name`,`car_chexing`,`car_cheng`,`car_indate`,`car_status`,`car_user`,`car_phone`,`car_text`
+    </sql>
+
+    <!--新增-->
+    <insert id="doCreate" useGeneratedKeys="true" keyColumn="id" keyProperty="id" parameterType="com.demo.vo.Car">
+        INSERT INTO `tb_car`
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                    <if test ='id != null'>`id`,</if>
+                    <if test ='carPai != null'>`car_pai`,</if>
+                    <if test ='carName != null'>`car_name`,</if>
+                    <if test ='carChexing != null'>`car_chexing`,</if>
+                    <if test ='carCheng != null'>`car_cheng`,</if>
+                    <if test ='carIndate != null'>`car_indate`,</if>
+                    <if test ='carStatus != null'>`car_status`,</if>
+                    <if test ='carUser != null'>`car_user`,</if>
+                    <if test ='carPhone != null'>`car_phone`,</if>
+                    <if test ='carText != null'>`car_text`</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+                    <if test ='id != null'>#{id},</if>
+                    <if test ='carPai != null'>#{carPai},</if>
+                    <if test ='carName != null'>#{carName},</if>
+                    <if test ='carChexing != null'>#{carChexing},</if>
+                    <if test ='carCheng != null'>#{carCheng},</if>
+                    <if test ='carIndate != null'>#{carIndate},</if>
+                    <if test ='carStatus != null'>#{carStatus},</if>
+                    <if test ='carUser != null'>#{carUser},</if>
+                    <if test ='carPhone != null'>#{carPhone},</if>
+                    <if test ='carText != null'>#{carText}</if>
+        </trim>
+    </insert>
+
+    <!--批量删除-->
+    <delete id="doRemoveBatch" parameterType="java.util.Collection">
+        DELETE FROM `tb_car` WHERE `id` IN
+        <foreach collection="list" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!--修改-->
+    <update id="doUpdate" parameterType="com.demo.vo.Car">
+        UPDATE `tb_car`
+        <set>
+                <if test ='id != null'>`id` = #{id},</if>
+                <if test ='carPai != null'>`car_pai` = #{carPai},</if>
+                <if test ='carName != null'>`car_name` = #{carName},</if>
+                <if test ='carChexing != null'>`car_chexing` = #{carChexing},</if>
+                <if test ='carCheng != null'>`car_cheng` = #{carCheng},</if>
+                <if test ='carIndate != null'>`car_indate` = #{carIndate},</if>
+                <if test ='carStatus != null'>`car_status` = #{carStatus},</if>
+                <if test ='carUser != null'>`car_user` = #{carUser},</if>
+                <if test ='carPhone != null'>`car_phone` = #{carPhone},</if>
+                <if test ='carText != null'>`car_text` = #{carText}</if>
+        </set>
+        WHERE `id` = #{id}
+    </update>
+
+    <!--获取-->
+    <select id="findById" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List" /> FROM `tb_car` WHERE `id` = #{id}
+    </select>
+
+    <!--列表-->
+    <select id="findAllSplit" parameterType="java.util.Map" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List" /> FROM `tb_car`
+        <where>
+            <if test="searchColumn != null and searchColumn != '' and keyword != null and keyword != ''">
+                ${searchColumn} LIKE CONCAT('%',#{keyword},'%')  AND
+            </if>
+            1=1
+        </where>
+        ORDER BY id ASC
+        <if test="startIndex != null and pageSize != null">
+            LIMIT #{startIndex},#{pageSize};
+        </if>
+    </select>
+    <!--数量-->
+    <select id="getAllCount" parameterType="java.util.Map" resultType="Integer">
+        SELECT COUNT(*) FROM `tb_car`
+        <where>
+            <if test="searchColumn != null and searchColumn != '' and keyword != null and keyword != ''">
+                ${searchColumn} LIKE CONCAT('%',#{keyword},'%')  AND
+            </if>
+            1=1
+        </where>
+    </select>
+</mapper>
